@@ -30,7 +30,7 @@ api_defaults = {
     'OLWIDGET_CSS': utils.url_join(settings.OLWIDGET_STATIC_URL, "css/olwidget.css"),
 }
 
-for key, default in api_defaults.iteritems():
+for key, default in api_defaults.items():
     if not hasattr(settings, key):
         setattr(settings, key, default)
 
@@ -126,9 +126,9 @@ class Map(forms.Widget):
         return layer_types_js
 
     def _get_layer_names(self, name):
-        """ 
+        """
         If the user gave us a layer_names parameter, use that.  Otherwise,
-        construct names based on ``name``. 
+        construct names based on ``name``.
         """
         n = len(self.vector_layers)
         if self.layer_names and len(self.layer_names) == n:
@@ -330,7 +330,7 @@ class EditableMap(BaseSingleLayerMap):
     """
     def __init__(self, options=None, **kwargs):
         super(EditableMap, self).__init__([EditableLayer()], options, **kwargs)
-        
+
 class InfoMap(BaseSingleLayerMap):
     """
     Convenience Map widget with a single info layer.
