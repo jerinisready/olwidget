@@ -2,6 +2,7 @@ import re
 
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
+from functools import reduce
 
 DEFAULT_PROJ = "4326"
 DEFAULT_OPTIONS = getattr(settings, 'OLWIDGET_DEFAULT_OPTIONS', {})
@@ -16,7 +17,7 @@ def get_custom_layer_types():
 
 def url_join(*args):
     return reduce(_reduce_url_parts, args)
-    
+
 def _reduce_url_parts(a, b):
     b = b or ""
     if a and a[-1] == "/":
@@ -74,7 +75,7 @@ def _get_wkt(value, srid):
     geos = get_geos(value, srid)
     wkt = ''
     if geos:
-        wkt = geos.wkt 
+        wkt = geos.wkt
     return wkt
 
 def _collection_wkt(fields, srid):
@@ -92,14 +93,14 @@ def _collection_wkt(fields, srid):
 def _add_srid(wkt, srid):
     """
     Returns EWKT (WKT with a specified SRID) for the given wkt and SRID
-    (default 4326). 
+    (default 4326).
     """
     if wkt:
         return "SRID=%s;%s" % (srid, wkt)
     return ""
 
 def options_for_field(db_field):
-    is_collection = db_field.geom_type in ('MULTIPOINT', 'MULTILINESTRING', 
+    is_collection = db_field.geom_type in ('MULTIPOINT', 'MULTILINESTRING',
             'MULTIPOLYGON', 'GEOMETRYCOLLECTION', 'GEOMETRY')
     if db_field.geom_type == 'GEOMETRYCOLLECTION':
         geometry = ['polygon', 'point', 'linestring']
