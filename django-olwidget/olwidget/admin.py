@@ -37,14 +37,14 @@ from django.http import HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
 from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
-#}}}
-from django.utils.encoding import force_unicode
+# }}}
 
 from olwidget.forms import apply_maps_to_modelform_fields, fix_initial_data, fix_cleaned_data
 from olwidget.widgets import InfoMap
 from olwidget.utils import DEFAULT_PROJ
 
 __all__ = ('GeoModelAdmin',)
+
 
 class GeoModelAdmin(ModelAdmin):
     options = None
@@ -66,12 +66,14 @@ class GeoModelAdmin(ModelAdmin):
 
         # enclose klass.__init__
         orig_init = ModelForm.__init__
+
         def new_init(self, *args, **kwargs):
             orig_init(self, *args, **kwargs)
             fix_initial_data(self.initial, self.initial_data_keymap)
 
         # enclose klass.clean
         orig_clean = ModelForm.clean
+
         def new_clean(self):
             orig_clean(self)
             fix_cleaned_data(self.cleaned_data, self.initial_data_keymap)
@@ -111,7 +113,7 @@ class GeoModelAdmin(ModelAdmin):
                         GeometryCollection(geoms, srid=int(DEFAULT_PROJ)),
                         "<a href='%s'>%s</a>" % (
                             cl.url_for_result(obj),
-                            force_unicode(obj)
+                            str(obj)
                         )
                     ))
 
@@ -144,9 +146,10 @@ class GeoModelAdmin(ModelAdmin):
 
         ChangeList = self.get_changelist(request)
         try:
-            cl = ChangeList(request, self.model, list_display, self.list_display_links, self.list_filter,
-                self.date_hierarchy, self.search_fields, self.list_select_related, self.list_per_page,
-                self.list_max_show_all, self.list_editable, self)
+            cl = ChangeList(request, self.model, list_display, self.list_display_links,
+                            self.list_filter, self.date_hierarchy, self.search_fields,
+                            self.list_select_related, self.list_per_page,
+                            self.list_max_show_all, self.list_editable, self)
         except IncorrectLookupParameters:
             # Wacky lookup parameters were given, so redirect to the main
             # changelist page, without parameters, and pass an 'invalid=1'
@@ -154,13 +157,17 @@ class GeoModelAdmin(ModelAdmin):
             # the 'invalid=1' parameter was already in the query string, something
             # is screwed up with the database, so display an error page.
             if ERROR_FLAG in request.GET.keys():
-                return render_to_response('admin/invalid_setup.html', {'title': _('Database error')})
+                return render_to_response(
+                    'admin/invalid_setup.html',
+                    {'title': _('Database error')})
             return HttpResponseRedirect(request.path + '?' + ERROR_FLAG + '=1')
 
         # If the request was POSTed, this might be a bulk action or a bulk edit.
         # Try to look up an action or confirmation first, but if this isn't an
         # action the POST will fall through to the bulk edit check, below.
-        if actions and request.method == 'POST' and (helpers.ACTION_CHECKBOX_NAME in request.POST or 'index' in request.POST):
+        if actions and request.method == 'POST' and (
+                helpers.ACTION_CHECKBOX_NAME in request.POST
+                or 'index' in request.POST):
             response = self.response_action(request, queryset=cl.get_query_set())
             if response:
                 return response
@@ -187,14 +194,14 @@ class GeoModelAdmin(ModelAdmin):
 
                 if changecount:
                     if changecount == 1:
-                        name = force_unicode(opts.verbose_name)
+                        name = str(opts.verbose_name)
                     else:
-                        name = force_unicode(opts.verbose_name_plural)
+                        name = str(opts.verbose_name_plural)
                     msg = ungettext("%(count)s %(name)s was changed successfully.",
                                     "%(count)s %(name)s were changed successfully.",
                                     changecount) % {'count': changecount,
                                                     'name': name,
-                                                    'obj': force_unicode(obj)}
+                                                    'obj': (obj)}
                     self.message_user(request, msg)
 
                 return HttpResponseRedirect(request.get_full_path())
@@ -217,11 +224,12 @@ class GeoModelAdmin(ModelAdmin):
         else:
             action_form = None
 
-        selection_note_all = ungettext('%(total_count)s selected',
+        selection_note_all = ungettext(
+            '%(total_count)s selected',
             'All %(total_count)s selected', cl.result_count)
 
         context = {
-            'module_name': force_unicode(opts.verbose_name_plural),
+            'module_name': str(opts.verbose_name_plural),
             'selection_note': _('0 of %(cnt)s selected') % {'cnt': len(cl.result_list)},
             'selection_note_all': selection_note_all % {'total_count': cl.result_count},
             'title': cl.title,
@@ -237,7 +245,7 @@ class GeoModelAdmin(ModelAdmin):
             'actions_selection_counter': self.actions_selection_counter,
         }
         context.update(extra_context or {})
-        
+
         # MODIFICATION
         map_ = self.get_changelist_map(cl)
         if map_:
@@ -251,5 +259,3 @@ class GeoModelAdmin(ModelAdmin):
             'admin/%s/change_list.html' % app_label,
             'admin/change_list.html'
         ], context, context_instance=context_instance)
-
-
