@@ -56,7 +56,7 @@ class GeoModelAdmin(ModelAdmin):
     default_field_class = None
 
     def get_form(self, *args, **kwargs):
-        """ 
+        """
         Get a ModelForm with our own `__init__` and `clean` methods.  However,
         we need to allow ModelForm's metaclass_factory to run unimpeded, so
         dynamically override the methods rather than subclassing.
@@ -76,7 +76,7 @@ class GeoModelAdmin(ModelAdmin):
             orig_clean(self)
             fix_cleaned_data(self.cleaned_data, self.initial_data_keymap)
             return self.cleaned_data
-        
+
         # Override methods
         ModelForm.__init__ = new_init
         ModelForm.clean = new_clean
@@ -88,8 +88,8 @@ class GeoModelAdmin(ModelAdmin):
                 default_field_class=self.default_field_class)
         return ModelForm
 
-    def get_changelist_map(self, cl):
-        """ 
+    def get_changelist_map(self, cl, request=None):
+        """
         Display a map in the admin changelist, with info popups
         """
         if self.list_map:

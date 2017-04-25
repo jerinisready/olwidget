@@ -1,4 +1,9 @@
-olwidget v0.4+
+Maintainers needed
+==================
+
+I no longer have time to maintain this project.  If you're interested in taking over please contact me.
+
+olwidget v0.6
 ===================================================
 
 ``olwidget`` is a javascript library and Django application for easily
