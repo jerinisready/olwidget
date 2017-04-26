@@ -120,7 +120,7 @@ def fix_initial_data(initial, initial_data_keymap):
 
 def fix_cleaned_data(cleaned_data, initial_data_keymap):
     for group, keys in initial_data_keymap.items():
-        if cleaned_data.has_key(group):
+        if group in cleaned_data:
             vals = cleaned_data.pop(group)
             if isinstance(vals, (list, tuple)):
                 for key, val in zip(keys, vals):
