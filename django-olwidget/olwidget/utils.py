@@ -27,7 +27,7 @@ def _reduce_url_parts(a, b):
 
 def translate_options(options):
     translated = {}
-    for key, value in options.items():
+    for key, value in list(options.items()):
         new_key = _separated_lowercase_to_lower_camelcase(key)
         # recurse
         if isinstance(value, dict):
@@ -53,7 +53,7 @@ def get_geos(value, srid=DEFAULT_PROJ):
     if value:
         if isinstance(value, GEOSGeometry):
             geos = value
-        elif isinstance(value, basestring):
+        elif isinstance(value, str):
             match = _ewkt_re.match(value)
             if match:
                 geos = GEOSGeometry(match.group('wkt'), match.group('srid'))

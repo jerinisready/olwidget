@@ -30,7 +30,7 @@ api_defaults = {
     'OLWIDGET_CSS': utils.url_join(settings.OLWIDGET_STATIC_URL, "css/olwidget.css"),
 }
 
-for key, default in api_defaults.items():
+for key, default in list(api_defaults.items()):
     if not hasattr(settings, key):
         setattr(settings, key, default)
 
@@ -145,7 +145,7 @@ class Map(forms.Widget):
 
     def _has_changed(self, initial, data):
         if (initial is None) or (not isinstance(initial, (tuple, list))):
-            initial = [u''] * len(data)
+            initial = [''] * len(data)
         for widget, initial, data in zip(self.vector_layers, initial, data):
             if utils.get_geos(initial) != utils.get_geos(data):
                 return True

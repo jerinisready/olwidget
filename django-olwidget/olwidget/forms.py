@@ -98,8 +98,8 @@ class MapModelFormMetaclass(type):
         new_class.base_fields = fields
         return new_class
 
-class MapModelForm(BaseMapModelForm):
-    __metaclass__ = MapModelFormMetaclass
+class MapModelForm(BaseMapModelForm, metaclass=MapModelFormMetaclass):
+    pass
 
 def fix_initial_data(initial, initial_data_keymap):
     """
@@ -113,13 +113,13 @@ def fix_initial_data(initial, initial_data_keymap):
     Used for rearranging initial data in fields to match declared maps.
     """
     if initial:
-        for dest, sources in initial_data_keymap.items():
+        for dest, sources in list(initial_data_keymap.items()):
             data = [initial.pop(s, None) for s in sources]
             initial[dest] = data
     return initial
 
 def fix_cleaned_data(cleaned_data, initial_data_keymap):
-    for group, keys in initial_data_keymap.items():
+    for group, keys in list(initial_data_keymap.items()):
         if group in cleaned_data:
             vals = cleaned_data.pop(group)
             if isinstance(vals, (list, tuple)):
@@ -138,7 +138,7 @@ def apply_maps_to_modelform_fields(fields, maps, default_options=None,
     """
     if default_field_class is None:
         default_field_class = MapField
-    map_field_names = (name for name,field in fields.items() if isinstance(field, (MapField, GeometryField)))
+    map_field_names = (name for name,field in list(fields.items()) if isinstance(field, (MapField, GeometryField)))
     if not maps:
         maps = [((name,),) for name in map_field_names]
     elif isinstance(maps, dict):
@@ -189,7 +189,7 @@ def apply_maps_to_modelform_fields(fields, maps, default_options=None,
             fields_copy = fields.copy()
             fields.clear()
             od_pos = 0
-            for od_item in fields_copy.items():
+            for od_item in list(fields_copy.items()):
                 if od_pos == min_pos: fields[map_name] = map_field
                 od_pos += 1
                 fields[od_item[0]] = od_item[1]
