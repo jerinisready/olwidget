@@ -98,7 +98,7 @@ class MapModelFormMetaclass(type):
         new_class.base_fields = fields
         return new_class
 
-class MapModelForm(BaseMapModelForm, metaclass=MapModelFormMetaclass):
+class MapModelForm(BaseMapModelForm):
     pass
 
 def fix_initial_data(initial, initial_data_keymap):
